@@ -19,13 +19,11 @@ class TimeSlotSerializer(serializers.ModelSerializer):
         request = self.context['request']
         doctor = request.user
 
-        # start < end
         if data['start_time'] >= data['end_time']:
             raise serializers.ValidationError(
-                "start_time end_time dan kichik bo‘lishi kerak"
+                "start_time end_time dan kichik bo'lishi kerak"
             )
 
-        # Overlap tekshirish
         overlap = TimeSlot.objects.filter(
             doctor=doctor,
             date=data['date'],
@@ -35,13 +33,12 @@ class TimeSlotSerializer(serializers.ModelSerializer):
 
         if overlap:
             raise serializers.ValidationError(
-                "Bu vaqt oralig‘ida boshqa TimeSlot mavjud"
+                "Bu vaqt oralig'ida boshqa TimeSlot mavjud"
             )
 
-        # O‘tmishdagi sana
         if data['date'] < timezone.now().date():
             raise serializers.ValidationError(
-                "O‘tmishdagi sana uchun TimeSlot yaratib bo‘lmaydi"
+                "O'tmishdagi sana uchun TimeSlot yaratib bo'lmaydi"
             )
 
         return data
@@ -56,28 +53,24 @@ class AppointmentCreateSerializer(serializers.ModelSerializer):
         user = request.user
         timeslot = data['timeslot']
 
-        # Faqat patient bron qiladi
         if user.role != 'patient':
             raise serializers.ValidationError(
                 "Faqat patient appointment bron qila oladi"
             )
-
-        # Doctor o‘ziga bron qilmasin
+            
         if timeslot.doctor == user:
             raise serializers.ValidationError(
-                "Doctor o‘ziga appointment bron qila olmaydi"
+                "Doctor o'ziga appointment bron qila olmaydi"
             )
 
-        # Slot band bo‘lmasin
         if not timeslot.is_available:
             raise serializers.ValidationError(
                 "Bu TimeSlot band qilingan"
             )
 
-        # O‘tmishga bron qilish
         if timeslot.date < timezone.now().date():
             raise serializers.ValidationError(
-                "O‘tmishdagi vaqtga appointment bron qilib bo‘lmaydi"
+                "O'tmishdagi vaqtga appointment bron qilib bo'lmaydi"
             )
 
         return data
@@ -125,7 +118,7 @@ class AppointmentUpdateSerializer(serializers.ModelSerializer):
     def validate_status(self, value):
         if value not in ['confirmed', 'cancelled']:
             raise serializers.ValidationError(
-                "Faqat confirmed yoki cancelled bo‘lishi mumkin"
+                "Faqat confirmed yoki cancelled bo'lishi mumkin"
             )
         return value
 
@@ -137,6 +130,6 @@ class AppointmentUpdateSerializer(serializers.ModelSerializer):
     def validate_status(self, value):
         if value not in ['confirmed', 'cancelled']:
             raise serializers.ValidationError(
-                "Faqat confirmed yoki cancelled bo‘lishi mumkin"
+                "Faqat confirmed yoki cancelled bo'lishi mumkin"
             )
         return value

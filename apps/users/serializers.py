@@ -48,8 +48,6 @@ class PatientProfileSerializer(serializers.ModelSerializer):
             'date_of_birth',
             'gender',
         )
-        
-
 
 class UserAdminSerializer(serializers.ModelSerializer):
     class Meta:

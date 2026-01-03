@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from apps.doctors.models import DoctorProfile
-from .models import PatientProfile
+from apps.users.models import PatientProfile
 
 User = get_user_model()
 
@@ -38,3 +38,26 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
 
         return user
+
+class PatientProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientProfile
+        fields = (
+            'id',
+            'phone',
+            'date_of_birth',
+            'gender',
+        )
+        
+
+
+class UserAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'role',
+            'is_active',
+            'created_at',
+        )
